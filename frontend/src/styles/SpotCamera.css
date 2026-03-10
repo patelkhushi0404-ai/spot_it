@@ -1,0 +1,116 @@
+body{
+margin:0;
+font-family: "Inter", sans-serif;
+background:#0f0b07;
+color:white;
+}
+
+/* HERO */
+
+.hero{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:80px 120px;
+background: radial-gradient(circle,#2a1609,#0f0b07);
+}
+
+.feature{
+max-width:260px;
+text-align:center;
+}
+
+.icon{
+width:50px;
+height:50px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+margin-bottom:10px;
+font-size:20px;
+}
+
+.blue{background:#3b82f6;}
+.orange{background:#f59e0b;}
+.green{background:#22c55e;}
+.gray{background:#555;}
+
+/* CENTER CIRCLE */
+
+.center-circle{
+text-align:center;
+}
+
+.circle-inner{
+width:200px;
+height:200px;
+border-radius:50%;
+border:4px solid #ff8c2a;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+margin:auto;
+box-shadow:0 0 40px rgba(255,140,42,0.5);
+}
+
+.lens{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.circle-text{
+margin-top:15px;
+color:#ccc;
+max-width:250px;
+}
+
+/* SECOND FEATURE ROW */
+
+.feature-row{
+display:flex;
+justify-content:center;
+gap:100px;
+padding:40px 0;
+}
+
+/* STEPS */
+
+.steps{
+text-align:center;
+padding:80px 40px;
+background:linear-gradient(#1b120a,#0f0b07);
+}
+
+.steps-grid{
+display:flex;
+justify-content:center;
+gap:80px;
+margin-top:50px;
+}
+
+.step-card{
+max-width:250px;
+}
+
+.step-icon{
+width:70px;
+height:70px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+font-size:26px;
+margin-bottom:15px;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+padding:30px;
+color:#aaa;
+}

@@ -1,0 +1,99 @@
+body{
+  margin:0;
+  background:#1c0f05;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* HERO SECTION */
+.hero{
+ margin-top: 80px;
+  width:100%;
+  min-height:90vh;
+  display:flex;
+  align-items:center;
+
+  padding:100px 8%;
+
+  background:linear-gradient(
+  rgba(0,0,0,0.65),
+  rgba(0,0,0,0.65)
+  ),
+  url("https://images.unsplash.com/photo-1606787366850-de6330128bfc");
+
+  background-size:cover;
+  background-position:center;
+  color:white;
+}
+
+/* TEXT AREA */
+.hero-content{
+  max-width:650px;
+}
+
+/* TAG */
+.tag{
+  background:#ff8c1a;
+  padding:7px 16px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* TITLE */
+.hero h1{
+  font-size:56px;
+  margin:25px 0 15px;
+  line-height:1.2;
+}
+
+.hero h1 span{
+  color:#ff8c1a;
+}
+
+/* DESCRIPTION */
+.hero p{
+  color:#d6d6d6;
+  font-size:18px;
+  line-height:1.6;
+  margin-bottom:35px;
+}
+
+/* BUTTONS */
+.hero-buttons{
+  display:flex;
+  gap:18px;
+}
+
+/* PRIMARY BUTTON */
+.primary-btn{
+  background:#ff8c1a;
+  border:none;
+  padding:14px 28px;
+  border-radius:30px;
+  color:white;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.primary-btn:hover{
+  background:#ff7700;
+}
+
+/* SECONDARY BUTTON */
+.secondary-btn{
+  background:transparent;
+  border:1px solid white;
+  padding:14px 28px;
+  border-radius:30px;
+  color:white;
+  font-weight:500;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.secondary-btn:hover{
+  background:white;
+  color:black;
+}
