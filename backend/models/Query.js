@@ -1,13 +1,29 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose');
 
-const querySchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+const querySchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    category: {
+      type: String,
+      enum: ['report_issue', 'reward_issue', 'general'],
+      required: true,
+    },
+    subject: { type: String, required: true, trim: true },
+    messages: [
+      {
+        sender: { type: String, enum: ['user', 'admin'], required: true },
+        text: { type: String, required: true },
+        attachment: { type: String, default: '' },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ['open', 'replied', 'closed'],
+      default: 'open',
+    },
   },
-  subject: String,
-  message: String,
-  adminReply: String
-}, { timestamps: true })
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Query", querySchema)
+module.exports = mongoose.model('Query', querySchema);
