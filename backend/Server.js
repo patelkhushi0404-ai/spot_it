@@ -5,7 +5,10 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorMiddleware');
 
-dotenv.config();
+dotenv.config();dotenv.config();
+console.log('CLOUDINARY KEY:', process.env.CLOUDINARY_API_KEY);
+console.log('CLOUDINARY SECRET:', process.env.CLOUDINARY_API_SECRET);
+console.log('CLOUDINARY NAME:', process.env.CLOUDINARY_CLOUD_NAME);
 connectDB();
 
 const app = express();
@@ -20,13 +23,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 2000,
   message: { success: false, message: 'Too many requests, please try again later.' },
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
+  windowMs: 1 * 60 * 1000,
+  max: 1000,
   message: { success: false, message: 'Too many login attempts, please try again later.' },
 });
 

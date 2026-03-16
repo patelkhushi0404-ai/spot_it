@@ -14,33 +14,67 @@ const redeemReward = async (req, res, next) => {
   try {
     const { rewardId } = req.body;
     const reward = await Reward.findById(rewardId);
-    if (!reward || !reward.isActive) return res.status(404).json({ success: false, message: 'Reward not available' });
+    if (!reward || !reward.isActive) {
+      return res.status(404).json({ success: false, message: 'Reward not available' });
+    }
 
     const user = await User.findById(req.user._id);
     if (user.totalPoints < reward.pointsRequired) {
-      return res.status(400).json({ success: false, message: `Need ${reward.pointsRequired} pts, you have ${user.totalPoints}` });
+      return res.status(400).json({
+        success: false,
+        message: `Need ${reward.pointsRequired} pts, you have ${user.totalPoints}`,
+      });
     }
 
     user.totalPoints -= reward.pointsRequired;
-    user.notifications.push({ message: `You redeemed "${reward.title}" for ${reward.pointsRequired} points!` });
+    user.notifications.push({
+      message: `You redeemed "${reward.title}" for ${reward.pointsRequired} points!`,
+    });
     await user.save({ validateBeforeSave: false });
 
-    const redemption = await Redemption.create({ user: user._id, reward: reward._id, pointsUsed: reward.pointsRequired });
-
-    await sendEmail({
-      to: user.email,
-      subject: `SpotIT - Reward Redeemed: ${reward.title}`,
-      html: `<h2>Reward Redeemed! 🎁</h2><p>Hi ${user.name}, you redeemed <strong>${reward.title}</strong> for ${reward.pointsRequired} points. Remaining: ${user.totalPoints} pts.</p>`,
+    const redemption = await Redemption.create({
+      user: user._id,
+      reward: reward._id,
+      rewardTitle: reward.title,
+      pointsUsed: reward.pointsRequired,
+      status: 'completed',
     });
 
-    res.json({ success: true, message: 'Reward redeemed!', redemption });
+   try {
+      await sendEmail({
+        to: user.email,
+        subject: `SpotIT - Reward Redeemed: ${reward.title}`,
+        html: `<h2>Reward Redeemed! 🎁</h2><p>Hi ${user.name}, you redeemed <strong>${reward.title}</strong> for ${reward.pointsRequired} points. Remaining: ${user.totalPoints} pts.</p>`,
+      });
+    } catch (emailError) {
+      console.log('Email failed:', emailError.message);
+    }
+
+    res.json({
+      success: true,
+      message: 'Reward redeemed!',
+      redemption,
+      remainingPoints: user.totalPoints,
+    });
   } catch (error) { next(error); }
 };
 
 const getRedemptionHistory = async (req, res, next) => {
   try {
-    const history = await Redemption.find({ user: req.user._id }).sort({ createdAt: -1 }).populate('reward', 'title type pointsRequired');
-    res.json({ success: true, history });
+    const redemptions = await Redemption.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .populate('reward', 'title pointsRequired');
+    res.json({ success: true, redemptions });
+  } catch (error) { next(error); }
+};
+
+const getAllRedemptions = async (req, res, next) => {
+  try {
+    const redemptions = await Redemption.find()
+      .sort({ createdAt: -1 })
+      .populate('user', 'name email')
+      .populate('reward', 'title pointsRequired');
+    res.json({ success: true, redemptions });
   } catch (error) { next(error); }
 };
 
@@ -66,4 +100,12 @@ const deleteReward = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { getRewards, redeemReward, getRedemptionHistory, createReward, updateReward, deleteReward };
+module.exports = {
+  getRewards,
+  redeemReward,
+  getRedemptionHistory,
+  getAllRedemptions,
+  createReward,
+  updateReward,
+  deleteReward,
+};

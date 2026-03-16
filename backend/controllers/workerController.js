@@ -1,23 +1,16 @@
 const Worker = require('../models/Worker');
 const Report = require('../models/Report');
 
-// @desc    Add new worker
-// @route   POST /api/workers
-// @access  Private/Admin
 const addWorker = async (req, res, next) => {
   try {
-    const { name, phone, area } = req.body;
-
-    const worker = await Worker.create({ name, phone, area });
+    const { name, phone, area, email } = req.body;
+    const worker = await Worker.create({ name, phone, area, email });
     res.status(201).json({ success: true, message: 'Worker added successfully', worker });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Get all workers
-// @route   GET /api/workers
-// @access  Private/Admin
 const getAllWorkers = async (req, res, next) => {
   try {
     const workers = await Worker.find().sort({ createdAt: -1 });
@@ -27,9 +20,6 @@ const getAllWorkers = async (req, res, next) => {
   }
 };
 
-// @desc    Get single worker
-// @route   GET /api/workers/:id
-// @access  Private/Admin
 const getWorkerById = async (req, res, next) => {
   try {
     const worker = await Worker.findById(req.params.id);
@@ -40,9 +30,6 @@ const getWorkerById = async (req, res, next) => {
   }
 };
 
-// @desc    Update worker
-// @route   PUT /api/workers/:id
-// @access  Private/Admin
 const updateWorker = async (req, res, next) => {
   try {
     const worker = await Worker.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -53,15 +40,11 @@ const updateWorker = async (req, res, next) => {
   }
 };
 
-// @desc    Delete worker
-// @route   DELETE /api/workers/:id
-// @access  Private/Admin
 const deleteWorker = async (req, res, next) => {
   try {
     const worker = await Worker.findById(req.params.id);
     if (!worker) return res.status(404).json({ success: false, message: 'Worker not found' });
 
-    // Check if worker has active assigned reports
     const activeReports = await Report.countDocuments({
       'assignedWorker.workerId': req.params.id,
       status: { $in: ['assigned', 'inprogress'] },
@@ -81,30 +64,24 @@ const deleteWorker = async (req, res, next) => {
   }
 };
 
-// @desc    Toggle worker availability
-// @route   PUT /api/workers/:id/toggle
-// @access  Private/Admin
 const toggleAvailability = async (req, res, next) => {
   try {
     const worker = await Worker.findById(req.params.id);
     if (!worker) return res.status(404).json({ success: false, message: 'Worker not found' });
 
-    worker.isAvailable = !worker.isAvailable;
+    worker.isActive = !worker.isActive;
     await worker.save();
 
     res.json({
       success: true,
-      message: `Worker marked as ${worker.isAvailable ? 'Available' : 'Unavailable'}`,
-      isAvailable: worker.isAvailable,
+      message: `Worker marked as ${worker.isActive ? 'Active' : 'Inactive'}`,
+      isActive: worker.isActive,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Get reports assigned to a worker
-// @route   GET /api/workers/:id/reports
-// @access  Private/Admin
 const getWorkerReports = async (req, res, next) => {
   try {
     const worker = await Worker.findById(req.params.id);

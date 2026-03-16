@@ -17,7 +17,12 @@ const workerSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    isAvailable: {
+    email: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    isActive: {
       type: Boolean,
       default: true,
     },

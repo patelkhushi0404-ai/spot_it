@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #f97316; border-radius: 10px; }
+
+/* Buttons */
+.btn-primary {
+  @apply bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium;
+}
+.btn-secondary {
+  @apply bg-transparent text-orange-400 border border-orange-400 px-4 py-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all duration-200 font-medium;
+}
+.btn-green {
+  @apply bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-200 font-medium;
+}
+.btn-blue {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200 font-medium;
+}
+.btn-danger {
+  @apply bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 font-medium;
+}
+
+/* Inputs */
+.input-field {
+  @apply w-full border border-slate-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 placeholder-slate-400;
+  background-color: #0d1526;
+}
+
+/* Cards */
+.card {
+  @apply rounded-xl border border-slate-700 p-6;
+  background-color: #1e293b;
+}
+.card-dark {
+  @apply rounded-xl border border-slate-700 p-6;
+  background-color: #0f172a;
+}
+
+/* Badges */
+.badge-pending {
+  @apply bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-xs font-medium border border-yellow-500/30;
+}
+.badge-assigned {
+  @apply bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium border border-blue-500/30;
+}
+.badge-inprogress {
+  @apply bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full text-xs font-medium border border-orange-500/30;
+}
+.badge-cleared {
+  @apply bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-medium border border-green-500/30;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-orange-400 via-green-400 to-blue-400 bg-clip-text text-transparent;
+}
+
+/* Glass effect */
+.glass {
+  @apply backdrop-blur-md border border-white/10;
+  background-color: rgba(255, 255, 255, 0.05);
+}

@@ -251,7 +251,13 @@ router.put('/:id/status', protect, adminOnly, changeStatus);
  *       200:
  *         description: Report cleared and points awarded
  */
-router.put('/:id/clear', protect, adminOnly, markCleared);
+router.put('/:id/clear', protect, adminOnly, (req, res, next) =>{
+  console.log('Clear route hit for ID:', req.params.id);
+  console.log('User:', req.user?.email);
+  console.log('Body:', req.body);
+  console.log('Content-Type:', req.headers['content-type']);
+  next();
+}, markCleared);
 
 // ===================== SINGLE REPORT — always last =====================
 
