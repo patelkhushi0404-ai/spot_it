@@ -25,14 +25,6 @@ const reportSchema = new mongoose.Schema(
       default: "pending",
     },
     assignedWorker: {
-      name: { type: String, default: "" },
-      assignedAt: { type: Date },
-    },
-    pointsAwarded: { type: Number, default: 0 },
-    clearedAt: { type: Date },
-    adminNote: { type: String, default: "" },
-    
-    assignedWorker: {
       workerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Worker",
@@ -43,6 +35,9 @@ const reportSchema = new mongoose.Schema(
       area: { type: String, default: "" },
       assignedAt: { type: Date },
     },
+    pointsAwarded: { type: Number, default: 0 },
+    clearedAt: { type: Date },
+    adminNote: { type: String, default: "" },
   },
   { timestamps: true },
 );

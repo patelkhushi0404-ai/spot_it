@@ -118,7 +118,6 @@ const assignWorker = async (req, res, next) => {
   }
 };
 
-
 const changeStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
@@ -189,7 +188,6 @@ const markCleared = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const getDashboardStats = async (req, res, next) => {
   try {

@@ -278,4 +278,3 @@ router.put('/:id/clear', protect, adminOnly, markCleared);
 router.get('/:id', protect, getReportById);
 
 module.exports = router;
-

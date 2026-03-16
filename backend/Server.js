@@ -30,18 +30,6 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many login attempts, please try again later.' },
 });
 
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./config/swagger');
-
-// Swagger docs
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { background-color: #16a34a }',
-  customSiteTitle: 'SpotIT API Docs',
-}));
-
-
-
 app.use('/api', limiter);
 app.use('/api/auth', authLimiter);
 
@@ -67,4 +55,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
