@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getProfile, updateProfile, getNotifications, markNotificationRead } = require('../controllers/profileController');
-const { protect } = require('../middleware/authMiddleware');
 
+const { protect } = require('../middleware/authMiddleware');
+const { getProfile, updateProfile, getNotifications, markNotificationRead, getProfileStats } = require('../controllers/profileController');
 /**
  * @swagger
  * tags:
@@ -89,5 +89,6 @@ router.get('/notifications', protect, getNotifications);
  *         description: Notification marked as read
  */
 router.put('/notifications/:id/read', protect, markNotificationRead);
+router.get('/stats', protect, getProfileStats);
 
 module.exports = router;

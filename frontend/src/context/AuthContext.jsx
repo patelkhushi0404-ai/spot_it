@@ -41,12 +41,12 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const logout = async () => {
-    try { await API.post('/auth/logout'); } catch (error) {}
-    localStorage.clear();
-    setUser(null);
-    window.location.href = '/login';
-  };
+ const logout = async () => {
+  try { await API.post('/auth/logout'); } catch (error) {}
+  localStorage.clear();
+  setUser(null);
+  window.location.href = '/';
+};
 
   const updateUser = (updatedUser) => setUser(updatedUser);
 

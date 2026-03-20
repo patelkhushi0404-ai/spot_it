@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../../api/axios';
 import AdminLayout from '../../components/admin/AdminLayout';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
+} from 'recharts';
 
 const DashboardPage = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  useEffect(() => { fetchStats(); }, []);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -42,6 +44,18 @@ const DashboardPage = () => {
     { label: 'In Progress', value: stats?.inprogress || 0, color: '#f97316' },
     { label: 'Cleared', value: stats?.cleared || 0, color: '#22c55e' },
   ];
+
+  const pieData = [
+    { name: 'Pending', value: stats?.pending || 0, color: '#f59e0b' },
+    { name: 'Assigned', value: stats?.assigned || 0, color: '#3b82f6' },
+    { name: 'In Progress', value: stats?.inprogress || 0, color: '#f97316' },
+    { name: 'Cleared', value: stats?.cleared || 0, color: '#22c55e' },
+  ].filter(d => d.value > 0);
+
+  const barData = (stats?.reportsPerDay || []).map(d => ({
+    date: d._id ? d._id.slice(5) : '',
+    Reports: d.count,
+  }));
 
   const total = stats?.total || 1;
 
@@ -102,6 +116,76 @@ const DashboardPage = () => {
               <p className="text-3xl font-black text-blue-600">
                 {stats?.total ? Math.round((stats.cleared / stats.total) * 100) : 0}%
               </p>
+            </div>
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+            {/* Bar Chart — Reports Per Day */}
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-gray-800 font-bold mb-1">Reports Last 7 Days</h2>
+              <p className="text-gray-400 text-xs mb-4">Daily report submissions</p>
+              {barData.length === 0 ? (
+                <div className="flex items-center justify-center h-48 text-gray-300">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">📊</div>
+                    <p className="text-sm">No data yet</p>
+                  </div>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={barData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#9ca3af' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}
+                    />
+                    <Bar dataKey="Reports" fill="#f97316" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            {/* Pie Chart — Status Distribution */}
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-gray-800 font-bold mb-1">Status Distribution</h2>
+              <p className="text-gray-400 text-xs mb-4">Current report status breakdown</p>
+              {pieData.length === 0 ? (
+                <div className="flex items-center justify-center h-48 text-gray-300">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🥧</div>
+                    <p className="text-sm">No data yet</p>
+                  </div>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={index} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}
+                    />
+                    <Legend
+                      iconType="circle"
+                      iconSize={8}
+                      wrapperStyle={{ fontSize: '12px' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 

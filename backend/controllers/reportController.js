@@ -5,32 +5,30 @@ const sendEmail = require("../utils/sendEmail");
 const submitReport = async (req, res, next) => {
   try {
     const { address, lat, lng, description } = req.body;
-    if (!req.file)
-      return res
-        .status(400)
-        .json({ success: false, message: "Image is required" });
+    if (!req.file) return res.status(400).json({ success: false, message: 'Image is required' });
+
+    // AI Analysis
+    const analyzeWaste = require('../utils/analyzeWaste');
+    let aiAnalysis = null;
+    try {
+      const result = await analyzeWaste(req.file.path);
+      if (result.success) aiAnalysis = result.analysis;
+    } catch (aiError) {
+      console.log('AI analysis failed:', aiError.message);
+    }
+
     const report = await Report.create({
       user: req.user._id,
       image: { url: req.file.path, publicId: req.file.filename },
-      location: {
-        address,
-        coordinates: { lat: parseFloat(lat), lng: parseFloat(lng) },
-      },
+      location: { address, coordinates: { lat: parseFloat(lat), lng: parseFloat(lng) } },
       description,
+      aiAnalysis,
     });
-    await User.findByIdAndUpdate(req.user._id, { $inc: { totalReports: 1 } });
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Report submitted successfully",
-        report,
-      });
-  } catch (error) {
-    next(error);
-  }
-};
 
+    await User.findByIdAndUpdate(req.user._id, { $inc: { totalReports: 1 } });
+    res.status(201).json({ success: true, message: 'Report submitted successfully', report });
+  } catch (error) { next(error); }
+};
 const getRecentReports = async (req, res, next) => {
   try {
     const reports = await Report.find()
@@ -281,6 +279,7 @@ const getDashboardStats = async (req, res, next) => {
   }
 };
 
+
 module.exports = {
   submitReport,
   getRecentReports,
@@ -291,4 +290,5 @@ module.exports = {
   changeStatus,
   markCleared,
   getDashboardStats,
+  
 };

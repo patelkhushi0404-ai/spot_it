@@ -21,6 +21,7 @@ import UsersPage from './pages/admin/UsersPage';
 import RewardsManagePage from './pages/admin/RewardsManagePage';
 import QueriesPage from './pages/admin/QueriesPage';
 
+
 function App() {
   return (
     <AuthProvider>
@@ -56,6 +57,7 @@ function App() {
           <Route path="/admin/users" element={<AdminRoute><UsersPage /></AdminRoute>} />
           <Route path="/admin/rewards" element={<AdminRoute><RewardsManagePage /></AdminRoute>} />
           <Route path="/admin/queries" element={<AdminRoute><QueriesPage /></AdminRoute>} />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

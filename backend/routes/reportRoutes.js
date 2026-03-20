@@ -36,6 +36,7 @@ const { upload } = require('../config/cloudinary');
  */
 router.get('/recent', getRecentReports);
 
+
 // ===================== ADMIN FIXED ROUTES (must be before /:id) =====================
 
 /**

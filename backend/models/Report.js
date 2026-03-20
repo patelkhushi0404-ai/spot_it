@@ -38,6 +38,17 @@ const reportSchema = new mongoose.Schema(
     pointsAwarded: { type: Number, default: 0 },
     clearedAt: { type: Date },
     adminNote: { type: String, default: "" },
+    aiAnalysis: {
+      wasteType: { type: String, default: null },
+      severity: {
+        type: String,
+        enum: ["Low", "Medium", "High", null],
+        default: null,
+      },
+      disposalMethod: { type: String, default: null },
+      environmentalImpact: { type: String, default: null },
+      isWaste: { type: Boolean, default: null },
+    },
   },
   { timestamps: true },
 );
