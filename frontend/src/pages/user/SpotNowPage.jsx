@@ -258,6 +258,15 @@ const SpotNowPage = () => {
                 videoConstraints={{ facingMode: cameraMode }}
                 className="w-full"
                 style={{ maxHeight: "400px", objectFit: "cover" }}
+                onUserMediaError={(err) => {
+                  console.error("Camera error:", err);
+                  toast.error(
+                    "Camera access denied. Please allow camera permission.",
+                  );
+                }}
+                onUserMedia={() => {
+                  console.log("Camera opened successfully");
+                }}
               />
               <div className="absolute inset-0 pointer-events-none">
                 <div

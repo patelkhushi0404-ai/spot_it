@@ -49,7 +49,7 @@ const ReportsPage = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const { data } = await API.get("/reports");
+      const { data } = await API.get("/reports?limit=100");
       setReports(data.reports);
     } catch (error) {
       console.error("Failed to fetch reports");
