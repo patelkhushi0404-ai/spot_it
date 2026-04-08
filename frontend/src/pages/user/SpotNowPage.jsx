@@ -1,15 +1,18 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import Webcam from "react-webcam";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import Navbar from "../../components/common/Navbar";
 
+const severityConfig = {
+  High: { bg: "rgba(239,68,68,0.2)", border: "rgba(239,68,68,0.4)", color: "#f87171" },
+  Medium: { bg: "rgba(234,179,8,0.2)", border: "rgba(234,179,8,0.4)", color: "#facc15" },
+  Low: { bg: "rgba(34,197,94,0.2)", border: "rgba(34,197,94,0.4)", color: "#4ade80" },
+};
+
 const SpotNowPage = () => {
-  const webcamRef = useRef(null);
   const [step, setStep] = useState(1);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [cameraMode, setCameraMode] = useState("environment");
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
@@ -20,11 +23,58 @@ const SpotNowPage = () => {
     lng: "",
   });
 
-  const capture = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setCapturedImage(imageSrc);
-    setStep(2);
-  }, [webcamRef]);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [stream, setStream] = useState(null);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "environment" } 
+      });
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    } catch (err) {
+      toast.error("Camera access denied or error occurred");
+      console.error(err);
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+  };
+
+  useEffect(() => {
+    if (step === 1 && !capturedImage) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+    return () => stopCamera();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, capturedImage]);
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageDataUrl = canvas.toDataURL('image/jpeg');
+      setCapturedImage(imageDataUrl);
+      stopCamera();
+      setStep(2);
+    }
+  };
+
+
 
   const retake = () => {
     setCapturedImage(null);
@@ -117,24 +167,6 @@ const SpotNowPage = () => {
     setStep(1);
   };
 
-  const severityConfig = {
-    Low: {
-      color: "#4ade80",
-      bg: "rgba(74,222,128,0.15)",
-      border: "rgba(74,222,128,0.3)",
-    },
-    Medium: {
-      color: "#fbbf24",
-      bg: "rgba(251,191,36,0.15)",
-      border: "rgba(251,191,36,0.3)",
-    },
-    High: {
-      color: "#f87171",
-      bg: "rgba(239,68,68,0.15)",
-      border: "rgba(239,68,68,0.3)",
-    },
-  };
-
   return (
     <div
       className="min-h-screen"
@@ -224,7 +256,7 @@ const SpotNowPage = () => {
           </span>
         </div>
 
-        {/* Step 1: Camera */}
+        {/* Step 1: Upload Image */}
         {step === 1 && (
           <div
             className="rounded-2xl overflow-hidden"
@@ -238,82 +270,37 @@ const SpotNowPage = () => {
               style={{ borderBottom: "1px solid rgba(100,116,139,0.2)" }}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-white font-bold">Capture Waste Image</h2>
-                <button
-                  onClick={() =>
-                    setCameraMode(
-                      cameraMode === "environment" ? "user" : "environment",
-                    )
-                  }
-                  className="text-slate-400 hover:text-white text-sm transition-colors"
-                >
-                  Flip Camera
-                </button>
+                <h2 className="text-white font-bold">Upload Waste Image</h2>
               </div>
             </div>
             <div className="relative">
-              <Webcam
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={{ facingMode: cameraMode }}
-                className="w-full"
-                style={{ maxHeight: "400px", objectFit: "cover" }}
-                onUserMediaError={(err) => {
-                  console.error("Camera error:", err);
-                  toast.error(
-                    "Camera access denied. Please allow camera permission.",
-                  );
-                }}
-                onUserMedia={() => {
-                  console.log("Camera opened successfully");
-                }}
-              />
-              <div className="absolute inset-0 pointer-events-none">
-                <div
-                  className="absolute top-4 left-4 w-8 h-8"
-                  style={{
-                    borderTop: "2px solid #fb923c",
-                    borderLeft: "2px solid #fb923c",
-                    borderRadius: "4px 0 0 0",
-                  }}
-                ></div>
-                <div
-                  className="absolute top-4 right-4 w-8 h-8"
-                  style={{
-                    borderTop: "2px solid #fb923c",
-                    borderRight: "2px solid #fb923c",
-                    borderRadius: "0 4px 0 0",
-                  }}
-                ></div>
-                <div
-                  className="absolute bottom-4 left-4 w-8 h-8"
-                  style={{
-                    borderBottom: "2px solid #fb923c",
-                    borderLeft: "2px solid #fb923c",
-                    borderRadius: "0 0 0 4px",
-                  }}
-                ></div>
-                <div
-                  className="absolute bottom-4 right-4 w-8 h-8"
-                  style={{
-                    borderBottom: "2px solid #fb923c",
-                    borderRight: "2px solid #fb923c",
-                    borderRadius: "0 0 4px 0",
-                  }}
-                ></div>
-              </div>
-            </div>
-            <div className="p-5">
-              <button
-                onClick={capture}
-                className="w-full py-4 rounded-xl font-bold text-white text-lg transition-all duration-200"
-                style={{
-                  background: "linear-gradient(135deg, #fb923c, #ea580c)",
-                  boxShadow: "0 10px 30px rgba(249,115,22,0.3)",
-                }}
+              <div 
+                className="w-full flex flex-col items-center justify-center p-8"
+                style={{ backgroundColor: "rgba(15,23,42,0.5)" }}
               >
-                Capture Photo
-              </button>
+                <div className="w-full max-w-sm rounded-xl overflow-hidden mb-6 relative bg-black flex flex-col items-center justify-center" style={{ minHeight: "300px" }}>
+                  {!stream && <p className="text-slate-400 text-sm">Starting camera...</p>}
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  ></video>
+                  <canvas ref={canvasRef} className="hidden"></canvas>
+                </div>
+                
+                <button
+                  onClick={capturePhoto}
+                  className="w-full max-w-sm py-4 rounded-xl font-bold text-white transition-all duration-200 flex items-center justify-center gap-2"
+                  style={{
+                    background: "linear-gradient(135deg, #fb923c, #ea580c)",
+                    boxShadow: "0 10px 30px rgba(249,115,22,0.3)",
+                  }}
+                >
+                  <span className="text-xl">📸</span>
+                  <span>Capture Photo</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
